@@ -1,8 +1,8 @@
 import itertools
 import sys # you must import "sys" to read from STDIN
-lines = sys.stdin.read().splitlines() # read in the input from STDIN
-k = int(lines[0])
-Pattern = lines[1]
+# lines = sys.stdin.read().splitlines() # read in the input from STDIN
+# k = int(lines[0])
+# Pattern = lines[1]
 
 def Overlap(Kmer):
 	final = []
@@ -69,4 +69,4 @@ def DeBruijn(k,Pattern):
     adjacency = "\n".join(printable)
     return(adjacency)
 
-print(DeBruijn(k,Pattern))
+# print(DeBruijn(k,Pattern))

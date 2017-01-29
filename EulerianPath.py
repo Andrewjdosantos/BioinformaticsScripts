@@ -1,16 +1,38 @@
 import itertools
 import sys # you must import "sys" to read from STDIN
-lines = sys.stdin.read().splitlines() # read in the input from STDIN
+# lines = sys.stdin.read().splitlines() # read in the input from STDIN
 import random
-edge = {}
+from collections import Counter
 
-for i in range(0,len(lines)):
-	start = int(lines[i].split("->")[0].strip())
-	end = lines[i].split("->")[1].split(',')
-	ender = []
-	for node in range(0,len(end)):
-		ender.append(int(end[node].strip()))
-	edge[start] = ender
+def DataMassage(lines):
+	edge = {}
+	nodes = []
+	for i in range(0,len(lines)):
+		start = lines[i].split("->")[0].strip()
+		end = lines[i].split("->")[1].split(',')
+		ender = []
+		for node in range(0,len(end)):
+			ender.append(end[node].strip())
+			nodes.append(end[node].strip())
+		edge[start] = ender
+	return(edge,nodes)
+
+def CalcStartEnd(nodes,edges):
+	counts = Counter(nodes)
+	start = 0
+	end = 0
+	for key in edges:
+		if key not in counts.keys():
+			start = key
+	for key in counts:
+		try:	
+			if len(edges[key]) < counts[key]:
+				end = key
+			if len(edges[key]) > counts[key]:
+				start = key
+		except(KeyError):
+			end = key
+	return(start,end)
 
 def CycleCreate(StartNode,edges):
 	WController = 0
@@ -18,16 +40,16 @@ def CycleCreate(StartNode,edges):
 	cycle.append(StartNode)
 	while WController == 0:
 		try:
-			NextNode = random.choice(edge[StartNode])
+			NextNode = random.choice(edges[StartNode])
 		except(KeyError):
 			WController = 1
 			return(cycle,edges)
 		cycle.append(NextNode)
 		edges[StartNode].remove(NextNode)
 		StartNode = NextNode
-		keys = edge.keys()
+		keys = edges.keys()
 		for key in keys:
-			if len(edge[key]) == 0:
+			if len(edges[key]) == 0:
 				del edges[key]
 
 def replace(l, X, Y):
@@ -36,9 +58,12 @@ def replace(l, X, Y):
         l.pop(i)
         l.insert(i, Y)
 
-def EularianCycle(edges):
+def EulerianPath(lines):
+	data = DataMassage(lines)
+	edges = data[0]
+	nodes = data[1]
 	cycle = []
-	StartNode = random.choice(edges.keys())
+	StartNode = CalcStartEnd(nodes,edges)[0]
 	cycler = CycleCreate(StartNode,edges)
 	cycle = cycler[0]
 	edges = cycler[1]
@@ -51,11 +76,15 @@ def EularianCycle(edges):
 		cycle.remove(StartNode)
 		for i in range(0,len(cycler[0])):
 			cycle.insert(indexed+i,cycler[0][i])
-	return(cycle)
-Euler = EularianCycle(edge)
-eul = str(Euler)
-output = eul.replace(',','->').replace('[','').replace(' ','').replace(']','')
-print(output)
+	cycleList = cycle
+	cycle = str(cycle).rstrip()
+	cycle = cycle.replace(',','->').replace('[','').replace(' ','').replace(']','').replace('','')
+	return(cycle,cycleList)
+
+# Euler = EularianPath(lines)
+# eul = str(Euler)
+# output = eul.replace(',','->').replace('[','').replace(' ','').replace(']','')
+# print(output)
 
 # select start node
 # add start node to cycle
