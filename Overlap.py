@@ -34,6 +34,7 @@ def Adjacency(Kmers):
 				app = Kmers[k]+" -> "+Kmers[i]
 				adjacency.append(app)
 	s = "\n"
+	adjacency=list(adjacency)
 	adjacency = s.join(adjacency)
 	return(adjacency)
 
